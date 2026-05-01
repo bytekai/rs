@@ -1,39 +1,14 @@
 use crate::error::AppError;
+use crate::task::model::{Task, TaskCreate, TaskUpdate};
 use axum::Json;
-use axum::Router;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
-use axum::routing as r;
 use chrono::{DateTime, Utc};
-use entity::model;
 use sqlx::SqlitePool;
 use uuid::Uuid;
 use validator::Validate;
 
-#[model]
-pub struct Task {
-    #[model(skip)]
-    pub id: Uuid,
-
-    #[validate(length(min = 1, max = 200))]
-    pub title: String,
-
-    #[validate(length(max = 2000))]
-    pub description: String,
-
-    pub done: bool,
-
-    #[model(skip)]
-    pub created_at: DateTime<Utc>,
-}
-
-pub fn routes() -> Router<SqlitePool> {
-    Router::new()
-        .route("/tasks", r::post(create).get(list))
-        .route("/tasks/{id}", r::get(get).patch(update).delete(delete))
-}
-
-async fn create(
+pub async fn create(
     State(pool): State<SqlitePool>,
     Json(input): Json<TaskCreate>,
 ) -> Result<Json<Task>, AppError> {
@@ -59,7 +34,7 @@ async fn create(
     }))
 }
 
-async fn list(State(pool): State<SqlitePool>) -> Result<Json<Vec<Task>>, AppError> {
+pub async fn list(State(pool): State<SqlitePool>) -> Result<Json<Vec<Task>>, AppError> {
     let xs = sqlx::query_as!(
         Task,
         r#"SELECT
@@ -75,7 +50,10 @@ async fn list(State(pool): State<SqlitePool>) -> Result<Json<Vec<Task>>, AppErro
     Ok(Json(xs))
 }
 
-async fn get(State(pool): State<SqlitePool>, Path(id): Path<Uuid>) -> Result<Json<Task>, AppError> {
+pub async fn get(
+    State(pool): State<SqlitePool>,
+    Path(id): Path<Uuid>,
+) -> Result<Json<Task>, AppError> {
     let t = sqlx::query_as!(
         Task,
         r#"SELECT
@@ -92,7 +70,7 @@ async fn get(State(pool): State<SqlitePool>, Path(id): Path<Uuid>) -> Result<Jso
     Ok(Json(t))
 }
 
-async fn update(
+pub async fn update(
     State(pool): State<SqlitePool>,
     Path(id): Path<Uuid>,
     Json(p): Json<TaskUpdate>,
@@ -118,7 +96,7 @@ async fn update(
     Ok(StatusCode::NO_CONTENT)
 }
 
-async fn delete(
+pub async fn delete(
     State(pool): State<SqlitePool>,
     Path(id): Path<Uuid>,
 ) -> Result<StatusCode, AppError> {
