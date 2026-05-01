@@ -5,37 +5,26 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::routing as r;
 use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
+use entity::model;
 use sqlx::SqlitePool;
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[model]
 pub struct Task {
+    #[model(skip)]
     pub id: Uuid,
+
+    #[validate(length(min = 1, max = 200))]
     pub title: String,
+
+    #[validate(length(max = 2000))]
     pub description: String,
+
     pub done: bool,
+
+    #[model(skip)]
     pub created_at: DateTime<Utc>,
-}
-
-#[derive(Debug, Deserialize, Validate)]
-pub struct TaskInput {
-    #[validate(length(min = 1, max = 200))]
-    pub title: String,
-    #[validate(length(max = 2000))]
-    pub description: String,
-    pub done: bool,
-}
-
-#[derive(Debug, Deserialize, Validate)]
-pub struct TaskPatch {
-    #[validate(length(min = 1, max = 200))]
-    title: Option<String>,
-    #[validate(length(max = 2000))]
-    description: Option<String>,
-    done: Option<bool>,
 }
 
 pub fn routes() -> Router<SqlitePool> {
@@ -46,7 +35,7 @@ pub fn routes() -> Router<SqlitePool> {
 
 async fn create(
     State(pool): State<SqlitePool>,
-    Json(input): Json<TaskInput>,
+    Json(input): Json<TaskCreate>,
 ) -> Result<Json<Task>, AppError> {
     input.validate()?;
     let id = Uuid::now_v7();
@@ -106,7 +95,7 @@ async fn get(State(pool): State<SqlitePool>, Path(id): Path<Uuid>) -> Result<Jso
 async fn update(
     State(pool): State<SqlitePool>,
     Path(id): Path<Uuid>,
-    Json(p): Json<TaskPatch>,
+    Json(p): Json<TaskUpdate>,
 ) -> Result<StatusCode, AppError> {
     p.validate()?;
     let rows = sqlx::query!(
