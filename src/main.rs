@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = task::routes().with_state(pool);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
-    info!("rs server listening on http://0.0.0.0:3000");
+    info!("rs ready on http://0.0.0.0:3000");
     axum::serve(listener, app).await?;
     Ok(())
 }
