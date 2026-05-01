@@ -1,0 +1,15 @@
+target
+**/*.db
+**/*.db-journal
+.env
+.env.*
+.git
+.gitignore
+.vscode
+.claude
+.idea
+examples
+*.md
+Makefile
+Dockerfile
+.dockerignore

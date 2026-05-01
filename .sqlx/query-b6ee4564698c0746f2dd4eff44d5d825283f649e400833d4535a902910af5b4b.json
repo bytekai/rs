@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n            id          as \"id!: Uuid\",\n            title       as \"title!: String\",\n            description as \"description!: String\",\n            done        as \"done!: bool\",\n            created_at  as \"created_at!: DateTime<Utc>\"\n        FROM tasks WHERE id = ?",
+  "describe": {
+    "columns": [
+      {
+        "name": "id!: Uuid",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "title!: String",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "description!: String",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "done!: bool",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at!: DateTime<Utc>",
+        "ordinal": 4,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "b6ee4564698c0746f2dd4eff44d5d825283f649e400833d4535a902910af5b4b"
+}

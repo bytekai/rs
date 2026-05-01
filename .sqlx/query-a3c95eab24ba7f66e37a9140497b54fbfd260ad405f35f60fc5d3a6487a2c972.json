@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE tasks SET\n            title       = COALESCE(?, title),\n            description = COALESCE(?, description),\n            done        = COALESCE(?, done)\n        WHERE id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "a3c95eab24ba7f66e37a9140497b54fbfd260ad405f35f60fc5d3a6487a2c972"
+}
