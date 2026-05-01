@@ -16,8 +16,8 @@ env:
   SQLX_OFFLINE: "true"
 
 jobs:
-  verify:
-    name: Verify
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
