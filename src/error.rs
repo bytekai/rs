@@ -16,20 +16,26 @@ impl From<sqlx::Error> for AppError {
         if let Some(d) = e.as_database_error()
             && matches!(d.kind(), sqlx::error::ErrorKind::UniqueViolation)
         {
-            return Self::Conflict { on: parse_unique_column(d.message()) };
+            return Self::Conflict {
+                on: parse_unique_column(d.message()),
+            };
         }
         Self::Db(e)
     }
 }
 
 impl From<validator::ValidationErrors> for AppError {
-    fn from(e: validator::ValidationErrors) -> Self { Self::Validation(e) }
+    fn from(e: validator::ValidationErrors) -> Self {
+        Self::Validation(e)
+    }
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         match self {
-            Self::Validation(e) => (StatusCode::UNPROCESSABLE_ENTITY, e.to_string()).into_response(),
+            Self::Validation(e) => {
+                (StatusCode::UNPROCESSABLE_ENTITY, e.to_string()).into_response()
+            }
             Self::NotFound => (StatusCode::NOT_FOUND, "not found").into_response(),
             Self::Conflict { on: Some(c) } => {
                 (StatusCode::CONFLICT, format!("conflict on `{}`", c)).into_response()

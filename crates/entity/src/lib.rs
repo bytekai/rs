@@ -43,7 +43,8 @@ pub fn model(_args: TokenStream, input: TokenStream) -> TokenStream {
 
         // Row: strip #[model(...)] and #[validate(...)]
         let mut row_f = f.clone();
-        row_f.attrs
+        row_f
+            .attrs
             .retain(|a| !a.path().is_ident("model") && !a.path().is_ident("validate"));
         row_fields.push(row_f);
 
@@ -60,7 +61,11 @@ pub fn model(_args: TokenStream, input: TokenStream) -> TokenStream {
         let ident = f.ident.as_ref().unwrap();
         let ty = &f.ty;
         let v = &f.vis;
-        let attrs: Vec<_> = f.attrs.iter().filter(|a| !a.path().is_ident("model")).collect();
+        let attrs: Vec<_> = f
+            .attrs
+            .iter()
+            .filter(|a| !a.path().is_ident("model"))
+            .collect();
         update_fields.push(quote! {
             #(#attrs)*
             #v #ident: ::core::option::Option<#ty>
